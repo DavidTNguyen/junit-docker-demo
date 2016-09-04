@@ -1,0 +1,21 @@
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+    maven {
+        url 'https://dl.bintray.com/palantir/releases'
+    }
+}
+
+dependencies {
+    testCompile 'com.palantir.docker.compose:docker-compose-rule:0.20.0'
+    testCompile 'com.jayway.restassured:rest-assured:2.9.0'
+    testCompile 'junit:junit'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
+

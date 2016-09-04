@@ -1,0 +1,15 @@
+service-one:
+  image: lorenc/service-one
+  ports:
+    - "8081:8080"
+service-two:
+  image: lorenc/service-two
+  ports:
+    - "8082:8080"
+service-three:
+  image: lorenc/service-three
+  ports:
+    - "8083:8080"
+  links:
+    - service-one
+    - service-two
