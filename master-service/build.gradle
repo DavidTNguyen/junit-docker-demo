@@ -19,7 +19,7 @@ apply plugin: 'application'
 apply plugin: 'docker'
 
 jar {
-    baseName = 'service-three'
+    baseName = 'master-service'
     version = '1.0.0'
 }
 

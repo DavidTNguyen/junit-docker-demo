@@ -13,13 +13,13 @@ buildscript {
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'kotlin'
+apply plugin: 'kotlin' // Required for Kotlin integration
 apply plugin: 'spring-boot'
 apply plugin: 'application'
 apply plugin: 'docker'
 
 jar {
-    baseName = 'service-one'
+    baseName = 'counter-service'
     version = '1.0.0'
 }
 

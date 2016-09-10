@@ -13,9 +13,9 @@ public class IntegrationTest {
     @ClassRule
     public static DockerComposeRule docker = DockerComposeRule.builder()
             .file("../docker-compose.yml")
-            .waitingForService("service-one", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
-            .waitingForService("service-two", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
-            .waitingForService("service-three", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
+            .waitingForService("greeting-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
+            .waitingForService("counter-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
+            .waitingForService("master-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
             .saveLogsTo("build/dockerLogs/dockerComposeRuleTest")
             .build();
 
@@ -40,7 +40,7 @@ public class IntegrationTest {
     @Test
     @Ignore
     public void shouldReturnDefaultGreetingWhenGreetingServiceDown() throws Exception {
-        docker.dockerCompose().container("service-one").stop();
+        docker.dockerCompose().container("greeting-service").stop();
 
         get("/greeting")
             .then().assertThat()
@@ -50,7 +50,7 @@ public class IntegrationTest {
     @Test
     @Ignore
     public void shouldReturnDefaultCountWhenCounterServiceDown() throws Exception {
-        docker.dockerCompose().container("service-two").stop();
+        docker.dockerCompose().container("counter-service").stop();
 
         get("/greeting")
             .then().assertThat()
