@@ -16,7 +16,7 @@ public class IntegrationTest {
             .waitingForService("greeting-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
             .waitingForService("counter-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
             .waitingForService("master-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
-            .saveLogsTo("build/dockerLogs/dockerComposeRuleTest")
+            .saveLogsTo("build/docker-logs")
             .build();
 
     @BeforeClass
@@ -32,7 +32,7 @@ public class IntegrationTest {
 
     @Test
     public void shouldReturnGreeting() throws Exception {
-        get("/greeting")
+        get("/info")
             .then().assertThat()
             .body("greeting", is("Hello World"));
     }
@@ -42,7 +42,7 @@ public class IntegrationTest {
     public void shouldReturnDefaultGreetingWhenGreetingServiceDown() throws Exception {
         docker.dockerCompose().container("greeting-service").stop();
 
-        get("/greeting")
+        get("/info")
             .then().assertThat()
             .body("greeting", is("Default Hello"));
     }
@@ -52,7 +52,7 @@ public class IntegrationTest {
     public void shouldReturnDefaultCountWhenCounterServiceDown() throws Exception {
         docker.dockerCompose().container("counter-service").stop();
 
-        get("/greeting")
+        get("/info")
             .then().assertThat()
             .body("counter", is(42));
     }

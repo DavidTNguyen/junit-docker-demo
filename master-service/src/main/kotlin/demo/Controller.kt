@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 class Controller @Autowired constructor(val greetingClient: GreetingClient,
                                         val counterClient: CounterClient) {
 
-    @RequestMapping("/greeting")
-    fun greeting(): Response {
+    @RequestMapping("/info")
+    fun info(): Response {
         return Response(
                 counterClient.counter().counter,
                 greetingClient.greeting().greeting
