@@ -16,4 +16,4 @@ To start all the services run `docker-compose up`
 ###URI Endpoints
 - [Greeting Service](http://localhost:8081/greeting)
 - [Counter Service](http://localhost:8082/counter)
-- [Master Service}(http://localhost:8083/info)
+- [Master Service](http://localhost:8083/info)
