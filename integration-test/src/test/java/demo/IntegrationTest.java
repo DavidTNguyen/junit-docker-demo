@@ -5,8 +5,7 @@ import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.function.Function;
@@ -21,8 +20,8 @@ public class IntegrationTest {
     private static final Function<DockerPort, String> TO_EXTERNAL_URI =
             (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT");
 
-    @ClassRule
-    public static DockerComposeRule docker = DockerComposeRule.builder()
+    @Rule
+    public DockerComposeRule docker = DockerComposeRule.builder()
             .file("../docker-compose.yml")
             .waitingForService("greeting-service", toRespondOverHttp(8080, TO_EXTERNAL_URI))
             .waitingForService("counter-service", toRespondOverHttp(8080, TO_EXTERNAL_URI))
@@ -31,7 +30,7 @@ public class IntegrationTest {
             .build();
 
     @Before
-    public static void setUp() throws Exception {
+    public void setUp() throws Exception {
         docker.dockerCompose().up();
         RestAssured.port = 8083;
     }
@@ -44,28 +43,26 @@ public class IntegrationTest {
     @Test
     public void shouldReturnData() throws Exception {
         get("/info")
-                .then().assertThat()
-                .body("counter", isA(Number.class))
-                .body("greeting", is("Hello World"));
+            .then().assertThat()
+            .body("counter", isA(Number.class))
+            .body("greeting", is("Hello World"));
     }
 
     @Test
-    @Ignore
     public void shouldReturnDefaultGreetingWhenGreetingServiceDown() throws Exception {
         docker.dockerCompose().container("greeting-service").stop();
 
         get("/info")
-                .then().assertThat()
-                .body("greeting", is("Hola!"));
+            .then().assertThat()
+            .body("greeting", is("Hola!"));
     }
 
     @Test
-    @Ignore
     public void shouldReturnDefaultCountWhenCounterServiceDown() throws Exception {
         docker.dockerCompose().container("counter-service").stop();
 
         get("/info")
-                .then().assertThat()
-                .body("counter", is(42));
+            .then().assertThat()
+            .body("counter", is(42));
     }
 }
