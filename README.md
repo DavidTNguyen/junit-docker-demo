@@ -11,7 +11,7 @@ To build docker images for each individual service, `cd` to the service folder a
 or simply run attached `build-docker-images.sh` shell script.
 
 ###Compose Up
-To start all the services run `docker-compose up`
+To start all the services from the command line, just run `docker-compose up`.
 
 ###URIs/Endpoints
 - [Greeting Service](http://localhost:8081/greeting)
