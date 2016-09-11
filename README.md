@@ -13,7 +13,7 @@ or simply run attached `build-docker-images.sh` shell script.
 ###Compose Up
 To start all the services run `docker-compose up`
 
-###URI Endpoints
+###URIs/Endpoints
 - [Greeting Service](http://localhost:8081/greeting)
 - [Counter Service](http://localhost:8082/counter)
 - [Master Service](http://localhost:8083/info)
