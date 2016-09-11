@@ -2,24 +2,35 @@ package demo;
 
 import com.jayway.restassured.RestAssured;
 import com.palantir.docker.compose.DockerComposeRule;
-import org.junit.*;
+import com.palantir.docker.compose.connection.DockerPort;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.util.function.Function;
 
 import static com.jayway.restassured.RestAssured.get;
 import static com.palantir.docker.compose.connection.waiting.HealthChecks.toRespondOverHttp;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
 
 public class IntegrationTest {
+
+    private static final Function<DockerPort, String> TO_EXTERNAL_URI =
+            (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT");
 
     @ClassRule
     public static DockerComposeRule docker = DockerComposeRule.builder()
             .file("../docker-compose.yml")
-            .waitingForService("greeting-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
-            .waitingForService("counter-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
-            .waitingForService("master-service", toRespondOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT")))
+            .waitingForService("greeting-service", toRespondOverHttp(8080, TO_EXTERNAL_URI))
+            .waitingForService("counter-service", toRespondOverHttp(8080, TO_EXTERNAL_URI))
+            .waitingForService("master-service", toRespondOverHttp(8080, TO_EXTERNAL_URI))
             .saveLogsTo("build/docker-logs")
             .build();
 
-    @BeforeClass
+    @Before
     public static void setUp() throws Exception {
         docker.dockerCompose().up();
         RestAssured.port = 8083;
@@ -31,10 +42,11 @@ public class IntegrationTest {
     }
 
     @Test
-    public void shouldReturnGreeting() throws Exception {
+    public void shouldReturnData() throws Exception {
         get("/info")
-            .then().assertThat()
-            .body("greeting", is("Hello World"));
+                .then().assertThat()
+                .body("counter", isA(Number.class))
+                .body("greeting", is("Hello World"));
     }
 
     @Test
@@ -43,8 +55,8 @@ public class IntegrationTest {
         docker.dockerCompose().container("greeting-service").stop();
 
         get("/info")
-            .then().assertThat()
-            .body("greeting", is("Default Hello"));
+                .then().assertThat()
+                .body("greeting", is("Hola!"));
     }
 
     @Test
@@ -53,7 +65,7 @@ public class IntegrationTest {
         docker.dockerCompose().container("counter-service").stop();
 
         get("/info")
-            .then().assertThat()
-            .body("counter", is(42));
+                .then().assertThat()
+                .body("counter", is(42));
     }
 }
