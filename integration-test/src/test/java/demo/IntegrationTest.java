@@ -2,6 +2,7 @@ package demo;
 
 import com.jayway.restassured.RestAssured;
 import com.palantir.docker.compose.DockerComposeRule;
+import com.palantir.docker.compose.connection.Container;
 import com.palantir.docker.compose.connection.DockerPort;
 import org.junit.*;
 
@@ -30,15 +31,8 @@ public class IntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        docker.dockerCompose().up();
-
-        DockerPort masterService = docker.containers().container("master-service").port(INTERNAL_PORT);
-        RestAssured.baseURI = TO_EXTERNAL_URI.apply(masterService);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        docker.dockerCompose().down();
+        Container masterServiceContainer = docker.containers().container("master-service");
+        RestAssured.baseURI = TO_EXTERNAL_URI.apply(masterServiceContainer.port(INTERNAL_PORT));
     }
 
     @Test
